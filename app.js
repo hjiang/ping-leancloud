@@ -30,17 +30,19 @@ function getLocation(ip, cb ) {
   if(ip) {
     var opts = {
       url: 'http://freeapi.ipip.net/' + ip,
+      timeout: 3000,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
       }
-    }
+    };
+
     request(opts, function(err, resp, body) {
       if (!err && resp.statusCode == 200) {
         try{
           var ret = JSON.parse(body);
           cb(ret.join(','));
         }catch(err) {
-          cb(null);
+          cb('unknown');
         }
       } else {
         cb('unknown');
@@ -50,7 +52,7 @@ function getLocation(ip, cb ) {
 }
 
 app.get('/', function(req, res) {
-  var ip = req.headers['x-real-ip'] || '118.28.8.8';
+  var ip = req.headers['x-real-ip'];
   if(ip) {
     getLocation(ip, function(location) {
       res.render('index', { ip:  ip,
