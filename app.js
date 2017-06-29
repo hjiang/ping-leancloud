@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var AV = require('leanengine');
+var request = require('request');
 
 var app = express();
 
@@ -25,8 +26,40 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+function getLocation(ip, cb ) {
+  if(ip) {
+    var opts = {
+      url: 'http://freeapi.ipip.net/' + ip,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
+      }
+    }
+    request(opts, function(err, resp, body) {
+      if (!err && resp.statusCode == 200) {
+        try{
+          var ret = JSON.parse(body);
+          cb(ret.join(','));
+        }catch(err) {
+          cb(null);
+        }
+      } else {
+        cb('unknown');
+      }
+    });
+  }
+}
+
 app.get('/', function(req, res) {
-  res.render('index', { ip: req.headers['x-real-ip'] || 'unknown' });
+  var ip = req.headers['x-real-ip'] || '118.28.8.8';
+  if(ip) {
+    getLocation(ip, function(location) {
+      res.render('index', { ip:  ip,
+                            location: location});
+    });
+  } else {
+    res.render('index', { ip:  ip || 'unknown',
+                          location: 'unknown'});
+  }
 });
 
 app.post('/save', function(req, res) {

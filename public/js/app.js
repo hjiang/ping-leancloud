@@ -104,8 +104,9 @@ $( document ).ready(function(){
     pingDomain('https://www.baidu.com/', '#baidu_ping');
   }
 
-  var selectors = ["ip", 'browser', 'os' ,'ua', 'ls_status', 'lc_ping',
-                   'us_lc_ping', 'lc_app_ping','lc_app_router_ping', 'lc_push_router_ping',
+  var selectors = ["ip", 'location', 'browser', 'os' ,'ua',
+                   'ls_status', 'lc_ping','us_lc_ping', 'lc_app_ping',
+                   'lc_app_router_ping', 'lc_push_router_ping',
                    'qiniu_up_ping', 'qbox_up_ping',
                    '163_ping', 'sina_ping', 'baidu_ping'];
 
